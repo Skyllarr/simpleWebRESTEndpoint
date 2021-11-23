@@ -1,0 +1,17 @@
+module add --name=lm --resources=/home/skylar/work/projects/example/target/example-1.0-SNAPSHOT.jar --dependencies=org.wildfly.security.elytron
+
+/subsystem=elytron/jaas-realm=myRealm:add(entry=test,path=/home/skylar/work/projects/jax-rs-basic-auth/JAASConfig.conf,module=lm,callback-handler=loginmodules.MyCallbackHandler)
+
+/subsystem=elytron/security-domain=mySD:add(default-realm=myRealm,realms=[{realm=myRealm}],permission-mapper=default-permission-mapper)
+
+/subsystem=elytron/http-authentication-factory=example-loginconfig-http-auth:add(http-server-mechanism-factory="global",mechanism-configurations=[{mechanism-name="BASIC",mechanism-realm-configurations=[{realm-name="FSRealmUsers"}]}],security-domain=mySD)
+
+/subsystem=undertow/application-security-domain=httpSD:add(http-authentication-factory=example-loginconfig-http-auth)
+
+/subsystem=elytron/http-authentication-factory=example-loginconfig-http-auth:write-attribute(name=security-domain,value=mySD)
+
+/subsystem=ejb3/application-security-domain=other:write-attribute(name=security-domain,value=mySD)
+batch
+/subsystem=undertow/application-security-domain=other:write-attribute(name=http-authentication-factory,value=example-loginconfig-http-auth)
+/subsystem=undertow/application-security-domain=other:undefine-attribute(name=security-domain)
+run-batch

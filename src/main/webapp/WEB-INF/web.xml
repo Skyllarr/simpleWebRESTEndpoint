@@ -22,7 +22,7 @@
     </security-constraint>
     <login-config>
         <auth-method>BASIC</auth-method>
-        <realm-name>DemoApplicationDomain</realm-name>
+        <realm-name>distributedSD2</realm-name>
     </login-config>
 
 </web-app>
